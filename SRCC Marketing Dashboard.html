@@ -550,12 +550,12 @@ const USERS=[
   {id:'tom',    name:'Tom',           role:'Chairperson',                   initials:'TC',color:'#e8e6f0',tc:'#2d2060',pin:'1956',isAdmin:true, email:'tom@preserveshadyrest.org'},
 ];
 
-// localStorage persistence
+// ── SHARED STORAGE (shared:true so all users see the same data) ──
 let _stateSaveTimer=null;
 function saveState(){
   if(_stateSaveTimer)clearTimeout(_stateSaveTimer);
   _stateSaveTimer=setTimeout(async()=>{
-    try{await window.storage.set('srmd_state',JSON.stringify({POINTS,COMPLETED,SHARED,FILES_DATA:FILES,FOLDERS_DATA:FOLDERS}));}catch(e){}
+    try{await window.storage.set('srmd_state',JSON.stringify({POINTS,COMPLETED,SHARED,FILES_DATA:FILES,FOLDERS_DATA:FOLDERS}),true);}catch(e){}
   },300);
 }
 
@@ -1190,7 +1190,7 @@ async function fetchEmails(){
   try{
     const uid=curUser.id,uemail=curUser.email;
     let all=[];
-    try{const r=await window.storage.get('emails_db');if(r)all=JSON.parse(r.value);}catch(e){all=[];}
+    try{const r=await window.storage.get('emails_db',true);if(r)all=JSON.parse(r.value);}catch(e){all=[];}
     _dbEmails=all.filter(em=>em.userId===uid||em.toEmail===uemail);
     _dbEmails.sort((a,b)=>new Date(b.sentAt)-new Date(a.sentAt));
     renderThreads();renderLinkedRecent();
@@ -1232,7 +1232,7 @@ function openThread(id,isDb,silent){
       t.messages.forEach(m=>{
         if(!m.isRead&&m.userId===curUser.id){
           m.isRead=true;
-          (async()=>{try{let all=[];try{const r=await window.storage.get('emails_db');if(r)all=JSON.parse(r.value);}catch(e){all=[];}const idx=all.findIndex(x=>x.id===m.id&&x.userId===curUser.id);if(idx>=0){all[idx].isRead=true;await window.storage.set('emails_db',JSON.stringify(all));}}catch(e){}})();
+          (async()=>{try{let all=[];try{const r=await window.storage.get('emails_db',true);if(r)all=JSON.parse(r.value);}catch(e){all=[];}const idx=all.findIndex(x=>x.id===m.id&&x.userId===curUser.id);if(idx>=0){all[idx].isRead=true;await window.storage.set('emails_db',JSON.stringify(all),true);}}catch(e){}})();
         }
       });
     }
@@ -1303,7 +1303,7 @@ async function sendEmail(){
   try{
     const now=new Date().toISOString();
     const threadId=`thread_${Date.now()}`;
-    let all=[];try{const r=await window.storage.get('emails_db');if(r)all=JSON.parse(r.value);}catch(e){all=[];}
+    let all=[];try{const r=await window.storage.get('emails_db',true);if(r)all=JSON.parse(r.value);}catch(e){all=[];}
     const newId=Date.now();
     const senderRecord={id:newId,fromEmail:curUser.email,fromName:curUser.name,toEmail:to,subject:subj,body,attachments:JSON.stringify(attachments),userId:curUser.id,threadId,isRead:true,sentAt:now,createdAt:now};
     all.push(senderRecord);
@@ -1312,7 +1312,7 @@ async function sendEmail(){
     if(recipientUserId&&recipientUserId!==curUser.id){
       all.push({id:newId+1,fromEmail:curUser.email,fromName:curUser.name,toEmail:to,subject:subj,body,attachments:JSON.stringify(attachments),userId:recipientUserId,threadId,isRead:false,sentAt:now,createdAt:now});
     }
-    await window.storage.set('emails_db',JSON.stringify(all));
+    await window.storage.set('emails_db',JSON.stringify(all),true);
     closeM();showToast('Email sent successfully!');
     btn.disabled=false;btn.innerHTML='<i class="ti ti-send" style="font-size:13px;margin-right:4px"></i>Send';
     fetchEmails();
@@ -1486,7 +1486,7 @@ const DEV_COLS=['Name','Organization','Role','Email','Phone Number','Other Conta
 
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 let _devSaveTimer=null;
-function saveDevData(){if(_devSaveTimer)clearTimeout(_devSaveTimer);_devSaveTimer=setTimeout(async()=>{try{await window.storage.set('srmd_dev',JSON.stringify(devData));}catch(e){}},300);}
+function saveDevData(){if(_devSaveTimer)clearTimeout(_devSaveTimer);_devSaveTimer=setTimeout(async()=>{try{await window.storage.set('srmd_dev',JSON.stringify(devData),true);}catch(e){}},300);}
 let devData={};
 DEV_TABS.forEach(tab=>{if(!devData[tab])devData[tab]=[];});
 
@@ -1555,25 +1555,22 @@ document.getElementById('cp-files').addEventListener('change',function(){
 });
 
 async function initApp(){
-  // Load persisted state
+  // Load persisted shared state
   try{
-    const sr=await window.storage.get('srmd_state');
+    const sr=await window.storage.get('srmd_state',true);
     if(sr){
       const s=JSON.parse(sr.value);
       if(s.POINTS)Object.assign(POINTS,s.POINTS);
       if(s.COMPLETED)Object.assign(COMPLETED,s.COMPLETED);
-      // Only restore saved events if they contain the new calendar data
       if(s.SHARED?.events){
         const hasNewEvents=s.SHARED.events.some(e=>e.id==='jun1'||e.id==='jul1'||e.id==='aug1');
         if(hasNewEvents)SHARED.events=s.SHARED.events;
       }
-      // Only restore saved tasks if they contain our new task ids, otherwise use defaults
       if(s.SHARED?.tasks){
-        const allSavedIds=[...( s.SHARED.tasks.todo||[]),...(s.SHARED.tasks.inprogress||[]),...(s.SHARED.tasks.done||[])].map(t=>t.id);
+        const allSavedIds=[...(s.SHARED.tasks.todo||[]),...(s.SHARED.tasks.inprogress||[]),...(s.SHARED.tasks.done||[])].map(t=>t.id);
         const hasNewTasks=allSavedIds.includes('tk1')&&allSavedIds.some(id=>['tk8','tk9','tk10','tk11'].includes(id));
         if(hasNewTasks)SHARED.tasks=s.SHARED.tasks;
       }
-      // Only restore saved files if they contain the new folder structure
       if(s.FILES_DATA){
         const hasNewFiles=s.FILES_DATA.some(f=>f.folder==='Donor Giving and Development');
         if(hasNewFiles){FILES=s.FILES_DATA;if(s.FOLDERS_DATA)FOLDERS=s.FOLDERS_DATA;}
@@ -1581,7 +1578,7 @@ async function initApp(){
     }
   }catch(e){}
   try{
-    const dr=await window.storage.get('srmd_dev');
+    const dr=await window.storage.get('srmd_dev',true);
     if(dr){const d=JSON.parse(dr.value);DEV_TABS.forEach(tab=>{if(d[tab])devData[tab]=d[tab];});}
   }catch(e){}
   renderGrid();

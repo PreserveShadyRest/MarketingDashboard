@@ -830,7 +830,7 @@ function launch(){
   document.getElementById('dev-nav').style.display=isDevUser?'flex':'none';
   document.getElementById('esub').textContent=curUser.email;
   document.getElementById('enm').textContent=curUser.email;
-  renderCal();renderTasks();renderFiles();renderThreads();fetchEmails();startEmailRefresh();if(isDevUser)renderDev();
+  renderCal();renderTasks();renderFiles();renderThreads();fetchEmails();startEmailRefresh();startSync();if(isDevUser)renderDev();
   setTaskTab('board',document.querySelector('.task-tab'));
   switchTab('calendar',document.querySelector('#app .ni'));
 }
@@ -842,7 +842,7 @@ function updateSidebar(){
   document.getElementById('sb-pts').textContent=u.isAdmin?'':(`⭐ ${POINTS[u.id]||0} pts · ${getLevel(POINTS[u.id]||0).label}`);
 }
 function doLogout(){
-  curUser=null;selId=null;_editingEventId=null;_dbEmails=[];_allThreads=[];_openThreadId=null;_openThreadIsDb=false;stopEmailRefresh();
+  curUser=null;selId=null;_editingEventId=null;_dbEmails=[];_allThreads=[];_openThreadId=null;_openThreadIsDb=false;stopEmailRefresh();stopSync();
   ['p0','p1','p2','p3'].forEach(x=>document.getElementById(x).value='');
   document.getElementById('lerr').textContent='';
   document.querySelectorAll('.ubtn').forEach(b=>b.classList.remove('sel'));
@@ -1223,6 +1223,77 @@ function renderLinkedRecent(){
 function refreshEmails(){fetchEmails();showToast('Refreshing emails…');}
 function startEmailRefresh(){if(_refreshTimer)clearInterval(_refreshTimer);_refreshTimer=setInterval(fetchEmails,5000);}
 function stopEmailRefresh(){if(_refreshTimer){clearInterval(_refreshTimer);_refreshTimer=null;}}
+
+// ── LIVE SYNC: poll every 3 seconds, update ALL tabs so any user sees edits instantly ──
+let _syncTimer=null;
+let _lastSyncHash='';
+let _lastDevHash='';
+
+function _setSyncDot(state){
+  // state: 'live' | 'updated' | 'off'
+  let dot=document.getElementById('sync-dot');
+  if(!dot){
+    dot=document.createElement('div');
+    dot.id='sync-dot';
+    dot.style.cssText='position:fixed;bottom:14px;right:18px;font-size:11px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:5px;z-index:500;pointer-events:none;transition:opacity .4s;';
+    document.body.appendChild(dot);
+  }
+  if(state==='live'){
+    dot.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#34c759;display:inline-block;box-shadow:0 0 0 2px rgba(52,199,89,.3)"></span>Live sync';
+    dot.style.opacity='0.7';
+  } else if(state==='updated'){
+    dot.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#ffd60a;display:inline-block"></span>Updated';
+    dot.style.opacity='1';
+    setTimeout(()=>_setSyncDot('live'),1800);
+  } else {
+    dot.style.opacity='0';
+  }
+}
+
+async function syncSharedState(){
+  if(!curUser)return;
+  try{
+    const sr=await window.storage.get('srmd_state',true);
+    if(sr && sr.value!==_lastSyncHash){
+      _lastSyncHash=sr.value;
+      const s=JSON.parse(sr.value);
+      if(s.POINTS)Object.assign(POINTS,s.POINTS);
+      if(s.COMPLETED)Object.assign(COMPLETED,s.COMPLETED);
+      if(s.SHARED?.events)SHARED.events=s.SHARED.events;
+      if(s.SHARED?.tasks)SHARED.tasks=s.SHARED.tasks;
+      if(s.FILES_DATA){FILES=s.FILES_DATA;if(s.FOLDERS_DATA)FOLDERS=s.FOLDERS_DATA;}
+      // Refresh ALL panels (not just the active one)
+      renderCal();
+      renderTasks();
+      renderFiles(document.getElementById('fsearch')?.value||'');
+      renderThreads();
+      updateSidebar();
+      if(curTaskTab==='rewards')renderRewards();
+      if(curTaskTab==='manager')renderManager();
+      _setSyncDot('updated');
+    }
+    const isDevUser=['gabe','jake','tom'].includes(curUser.id);
+    if(isDevUser){
+      const dr=await window.storage.get('srmd_dev',true);
+      if(dr && dr.value!==_lastDevHash){
+        _lastDevHash=dr.value;
+        const d=JSON.parse(dr.value);
+        DEV_TABS.forEach(tab=>{if(d[tab])devData[tab]=d[tab];});
+        renderDevTable();
+        _setSyncDot('updated');
+      }
+    }
+  }catch(e){}
+}
+function startSync(){
+  _setSyncDot('live');
+  if(_syncTimer)clearInterval(_syncTimer);
+  _syncTimer=setInterval(syncSharedState,3000);
+}
+function stopSync(){
+  if(_syncTimer){clearInterval(_syncTimer);_syncTimer=null;}
+  _setSyncDot('off');
+}
 function openThread(id,isDb,silent){
   _openThreadId=id;_openThreadIsDb=isDb;
   if(isDb){

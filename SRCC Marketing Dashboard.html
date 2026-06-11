@@ -9,7 +9,6 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script>
-// ── PASTE YOUR FIREBASE CONFIG HERE ──
 const firebaseConfig = {
   apiKey: "AIzaSyCwx4X5YdYAQQvVJLh0hdl3OYmieD3TFag",
   authDomain: "shady-rest-dashboard.firebaseapp.com",
@@ -19,22 +18,32 @@ const firebaseConfig = {
   appId: "1:128559369201:web:96d08952605e898f259250",
   measurementId: "G-E1T09LJ09B"
 };
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-// ── Simple helpers used throughout the app ──
-window.fbSet = async (key, value) => {
-  await db.collection('dashboard').doc(key).set({ data: JSON.stringify(value) });
-};
-window.fbGet = async (key) => {
-  const snap = await db.collection('dashboard').doc(key).get();
-  return snap.exists ? JSON.parse(snap.data().data) : null;
-};
-window.fbWatch = (key, callback) => {
-  return db.collection('dashboard').doc(key).onSnapshot(snap => {
-    if (snap.exists) callback(JSON.parse(snap.data().data));
-  });
-};
+try {
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+  window.fbSet = async (key, value) => {
+    await db.collection('dashboard').doc(key).set({ data: JSON.stringify(value) });
+  };
+  window.fbGet = async (key) => {
+    try {
+      const snap = await db.collection('dashboard').doc(key).get();
+      return snap.exists ? JSON.parse(snap.data().data) : null;
+    } catch(e) { return null; }
+  };
+  window.fbWatch = (key, callback) => {
+    return db.collection('dashboard').doc(key).onSnapshot(snap => {
+      if (snap.exists) { try { callback(JSON.parse(snap.data().data)); } catch(e){} }
+    });
+  };
+  window._firebaseOk = true;
+} catch(e) {
+  console.error('Firebase init failed:', e);
+  // Fallback stubs so the app still loads without sync
+  window.fbSet = async () => {};
+  window.fbGet = async () => null;
+  window.fbWatch = () => () => {};
+  window._firebaseOk = false;
+}
 </script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -1679,7 +1688,12 @@ async function initApp(){
   }catch(e){}
   renderGrid();
 }
-initApp();
+// Wait for DOM to be ready before running
+if(document.readyState==='loading'){
+  document.addEventListener('DOMContentLoaded', initApp);
+} else {
+  initApp();
+}
 </script>
 </body>
 </html>

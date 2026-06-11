@@ -5,6 +5,37 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Shady Rest Marketing Dashboard</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css"/>
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script>
+// ── PASTE YOUR FIREBASE CONFIG HERE ──
+const firebaseConfig = {
+  apiKey: "AIzaSyCwx4X5YdYAQQvVJLh0hdl3OYmieD3TFag",
+  authDomain: "shady-rest-dashboard.firebaseapp.com",
+  projectId: "shady-rest-dashboard",
+  storageBucket: "shady-rest-dashboard.firebasestorage.app",
+  messagingSenderId: "128559369201",
+  appId: "1:128559369201:web:96d08952605e898f259250",
+  measurementId: "G-E1T09LJ09B"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+// ── Simple helpers used throughout the app ──
+window.fbSet = async (key, value) => {
+  await db.collection('dashboard').doc(key).set({ data: JSON.stringify(value) });
+};
+window.fbGet = async (key) => {
+  const snap = await db.collection('dashboard').doc(key).get();
+  return snap.exists ? JSON.parse(snap.data().data) : null;
+};
+window.fbWatch = (key, callback) => {
+  return db.collection('dashboard').doc(key).onSnapshot(snap => {
+    if (snap.exists) callback(JSON.parse(snap.data().data));
+  });
+};
+</script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{--m:#6B1F2A;--md:#4A1219;--ml:#F5ECED;--mu:#D4A0A6;--mb:rgba(107,31,42,0.18);--mbs:rgba(107,31,42,0.38);
@@ -555,7 +586,7 @@ let _stateSaveTimer=null;
 function saveState(){
   if(_stateSaveTimer)clearTimeout(_stateSaveTimer);
   _stateSaveTimer=setTimeout(async()=>{
-    try{await window.storage.set('srmd_state',JSON.stringify({POINTS,COMPLETED,SHARED,FILES_DATA:FILES,FOLDERS_DATA:FOLDERS}),true);}catch(e){}
+    try{await window.fbSet('srmd_state',{POINTS,COMPLETED,SHARED,FILES_DATA:FILES,FOLDERS_DATA:FOLDERS});}catch(e){console.error('saveState error',e);}
   },300);
 }
 
@@ -1190,7 +1221,7 @@ async function fetchEmails(){
   try{
     const uid=curUser.id,uemail=curUser.email;
     let all=[];
-    try{const r=await window.storage.get('emails_db',true);if(r)all=JSON.parse(r.value);}catch(e){all=[];}
+    try{const r=await window.fbGet('emails_db');if(r)all=r;}catch(e){all=[];}
     _dbEmails=all.filter(em=>em.userId===uid||em.toEmail===uemail);
     _dbEmails.sort((a,b)=>new Date(b.sentAt)-new Date(a.sentAt));
     renderThreads();renderLinkedRecent();
@@ -1224,23 +1255,23 @@ function refreshEmails(){fetchEmails();showToast('Refreshing emails…');}
 function startEmailRefresh(){if(_refreshTimer)clearInterval(_refreshTimer);_refreshTimer=setInterval(fetchEmails,5000);}
 function stopEmailRefresh(){if(_refreshTimer){clearInterval(_refreshTimer);_refreshTimer=null;}}
 
-// ── LIVE SYNC: poll every 3 seconds, update ALL tabs so any user sees edits instantly ──
-let _syncTimer=null;
-let _lastSyncHash='';
-let _lastDevHash='';
+
+// ── LIVE SYNC: Firestore real-time listeners — changes appear instantly for all users ──
+let _syncTimer=null; // used for email polling only
+let _fbUnsubState=null;
+let _fbUnsubDev=null;
 
 function _setSyncDot(state){
-  // state: 'live' | 'updated' | 'off'
   let dot=document.getElementById('sync-dot');
   if(!dot){
     dot=document.createElement('div');
     dot.id='sync-dot';
-    dot.style.cssText='position:fixed;bottom:14px;right:18px;font-size:11px;color:rgba(255,255,255,.55);display:flex;align-items:center;gap:5px;z-index:500;pointer-events:none;transition:opacity .4s;';
+    dot.style.cssText='position:fixed;bottom:14px;right:18px;font-size:11px;color:#fff;display:flex;align-items:center;gap:5px;z-index:500;pointer-events:none;transition:opacity .5s;background:rgba(74,18,25,.6);padding:4px 11px;border-radius:20px;box-shadow:0 1px 6px rgba(0,0,0,.18);';
     document.body.appendChild(dot);
   }
   if(state==='live'){
-    dot.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#34c759;display:inline-block;box-shadow:0 0 0 2px rgba(52,199,89,.3)"></span>Live sync';
-    dot.style.opacity='0.7';
+    dot.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#34c759;display:inline-block;box-shadow:0 0 0 3px rgba(52,199,89,.25)"></span>Live';
+    dot.style.opacity='0.9';
   } else if(state==='updated'){
     dot.innerHTML='<span style="width:7px;height:7px;border-radius:50%;background:#ffd60a;display:inline-block"></span>Updated';
     dot.style.opacity='1';
@@ -1250,49 +1281,43 @@ function _setSyncDot(state){
   }
 }
 
-async function syncSharedState(){
-  if(!curUser)return;
-  try{
-    const sr=await window.storage.get('srmd_state',true);
-    if(sr && sr.value!==_lastSyncHash){
-      _lastSyncHash=sr.value;
-      const s=JSON.parse(sr.value);
-      if(s.POINTS)Object.assign(POINTS,s.POINTS);
-      if(s.COMPLETED)Object.assign(COMPLETED,s.COMPLETED);
-      if(s.SHARED?.events)SHARED.events=s.SHARED.events;
-      if(s.SHARED?.tasks)SHARED.tasks=s.SHARED.tasks;
-      if(s.FILES_DATA){FILES=s.FILES_DATA;if(s.FOLDERS_DATA)FOLDERS=s.FOLDERS_DATA;}
-      // Refresh ALL panels (not just the active one)
-      renderCal();
-      renderTasks();
-      renderFiles(document.getElementById('fsearch')?.value||'');
-      renderThreads();
-      updateSidebar();
-      if(curTaskTab==='rewards')renderRewards();
-      if(curTaskTab==='manager')renderManager();
-      _setSyncDot('updated');
-    }
-    const isDevUser=['gabe','jake','tom'].includes(curUser.id);
-    if(isDevUser){
-      const dr=await window.storage.get('srmd_dev',true);
-      if(dr && dr.value!==_lastDevHash){
-        _lastDevHash=dr.value;
-        const d=JSON.parse(dr.value);
-        DEV_TABS.forEach(tab=>{if(d[tab])devData[tab]=d[tab];});
-        renderDevTable();
-        _setSyncDot('updated');
-      }
-    }
-  }catch(e){}
+function _applySharedState(s){
+  if(!s||!curUser)return;
+  if(s.POINTS)Object.assign(POINTS,s.POINTS);
+  if(s.COMPLETED)Object.assign(COMPLETED,s.COMPLETED);
+  if(s.SHARED?.events)SHARED.events=s.SHARED.events;
+  if(s.SHARED?.tasks)SHARED.tasks=s.SHARED.tasks;
+  if(s.FILES_DATA){FILES=s.FILES_DATA;if(s.FOLDERS_DATA)FOLDERS=s.FOLDERS_DATA;}
+  renderCal();
+  renderTasks();
+  renderFiles(document.getElementById('fsearch')?.value||'');
+  renderThreads();
+  updateSidebar();
+  if(curTaskTab==='rewards')renderRewards();
+  if(curTaskTab==='manager')renderManager();
+  _setSyncDot('updated');
 }
+
 function startSync(){
   _setSyncDot('live');
-  if(_syncTimer)clearInterval(_syncTimer);
-  _syncTimer=setInterval(syncSharedState,3000);
+  if(_fbUnsubState)_fbUnsubState();
+  _fbUnsubState=window.fbWatch('srmd_state',s=>{if(curUser)_applySharedState(s);});
+  const isDevUser=['gabe','jake','tom'].includes(curUser?.id);
+  if(isDevUser){
+    if(_fbUnsubDev)_fbUnsubDev();
+    _fbUnsubDev=window.fbWatch('srmd_dev',dr=>{
+      if(!curUser||!dr)return;
+      DEV_TABS.forEach(tab=>{if(dr[tab])devData[tab]=dr[tab];});
+      renderDevTable();
+      _setSyncDot('updated');
+    });
+  }
 }
 function stopSync(){
-  if(_syncTimer){clearInterval(_syncTimer);_syncTimer=null;}
+  if(_fbUnsubState){_fbUnsubState();_fbUnsubState=null;}
+  if(_fbUnsubDev){_fbUnsubDev();_fbUnsubDev=null;}
   _setSyncDot('off');
+}
 }
 function openThread(id,isDb,silent){
   _openThreadId=id;_openThreadIsDb=isDb;
@@ -1303,7 +1328,7 @@ function openThread(id,isDb,silent){
       t.messages.forEach(m=>{
         if(!m.isRead&&m.userId===curUser.id){
           m.isRead=true;
-          (async()=>{try{let all=[];try{const r=await window.storage.get('emails_db',true);if(r)all=JSON.parse(r.value);}catch(e){all=[];}const idx=all.findIndex(x=>x.id===m.id&&x.userId===curUser.id);if(idx>=0){all[idx].isRead=true;await window.storage.set('emails_db',JSON.stringify(all),true);}}catch(e){}})();
+          (async()=>{try{let all=[];try{const r=await window.fbGet('emails_db');if(r)all=r;}catch(e){all=[];}const idx=all.findIndex(x=>x.id===m.id&&x.userId===curUser.id);if(idx>=0){all[idx].isRead=true;await window.fbSet('emails_db',all);}}catch(e){}})();
         }
       });
     }
@@ -1374,7 +1399,7 @@ async function sendEmail(){
   try{
     const now=new Date().toISOString();
     const threadId=`thread_${Date.now()}`;
-    let all=[];try{const r=await window.storage.get('emails_db',true);if(r)all=JSON.parse(r.value);}catch(e){all=[];}
+    let all=[];try{const r=await window.fbGet('emails_db');if(r)all=r;}catch(e){all=[];}
     const newId=Date.now();
     const senderRecord={id:newId,fromEmail:curUser.email,fromName:curUser.name,toEmail:to,subject:subj,body,attachments:JSON.stringify(attachments),userId:curUser.id,threadId,isRead:true,sentAt:now,createdAt:now};
     all.push(senderRecord);
@@ -1383,7 +1408,7 @@ async function sendEmail(){
     if(recipientUserId&&recipientUserId!==curUser.id){
       all.push({id:newId+1,fromEmail:curUser.email,fromName:curUser.name,toEmail:to,subject:subj,body,attachments:JSON.stringify(attachments),userId:recipientUserId,threadId,isRead:false,sentAt:now,createdAt:now});
     }
-    await window.storage.set('emails_db',JSON.stringify(all),true);
+    await window.fbSet('emails_db',all);
     closeM();showToast('Email sent successfully!');
     btn.disabled=false;btn.innerHTML='<i class="ti ti-send" style="font-size:13px;margin-right:4px"></i>Send';
     fetchEmails();
@@ -1557,7 +1582,7 @@ const DEV_COLS=['Name','Organization','Role','Email','Phone Number','Other Conta
 
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 let _devSaveTimer=null;
-function saveDevData(){if(_devSaveTimer)clearTimeout(_devSaveTimer);_devSaveTimer=setTimeout(async()=>{try{await window.storage.set('srmd_dev',JSON.stringify(devData),true);}catch(e){}},300);}
+function saveDevData(){if(_devSaveTimer)clearTimeout(_devSaveTimer);_devSaveTimer=setTimeout(async()=>{try{await window.fbSet('srmd_dev',devData);}catch(e){console.error('saveDevData error',e);}},300);}
 let devData={};
 DEV_TABS.forEach(tab=>{if(!devData[tab])devData[tab]=[];});
 
@@ -1628,9 +1653,9 @@ document.getElementById('cp-files').addEventListener('change',function(){
 async function initApp(){
   // Load persisted shared state
   try{
-    const sr=await window.storage.get('srmd_state',true);
+    const sr=await window.fbGet('srmd_state');
     if(sr){
-      const s=JSON.parse(sr.value);
+      const s=sr;
       if(s.POINTS)Object.assign(POINTS,s.POINTS);
       if(s.COMPLETED)Object.assign(COMPLETED,s.COMPLETED);
       if(s.SHARED?.events){
@@ -1649,8 +1674,8 @@ async function initApp(){
     }
   }catch(e){}
   try{
-    const dr=await window.storage.get('srmd_dev',true);
-    if(dr){const d=JSON.parse(dr.value);DEV_TABS.forEach(tab=>{if(d[tab])devData[tab]=d[tab];});}
+    const dr=await window.fbGet('srmd_dev');
+    if(dr){DEV_TABS.forEach(tab=>{if(dr[tab])devData[tab]=dr[tab];});}
   }catch(e){}
   renderGrid();
 }

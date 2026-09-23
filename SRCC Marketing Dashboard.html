@@ -582,10 +582,9 @@ body{font-family:var(--font-sans);font-size:14px;background:#faf8f8;}
 <script>
 // ── DATA ──
 const USERS=[
-  {id:'cali',   name:'Cali Pucci',    role:'Social Media & Marketing',     initials:'CP',color:'#f0d8db',tc:'#4A1219',pin:'6336',isAdmin:false,email:'cali@preserveshadyrest.org'},
-  {id:'jake',   name:'Jake Jones',    role:'Donor Giving & Development',    initials:'JJ',color:'#dce8f5',tc:'#0C447C',pin:'3117',isAdmin:false,email:'jake@preserveshadyrest.org'},
-  {id:'alexar', name:'Alexa Ramos',   role:'Social Media & Marketing',     initials:'AR',color:'#faeeda',tc:'#633806',pin:'4124',isAdmin:false,email:'alexaramos@preserveshadyrest.org'},
+  {id:'alexar', name:'Alexa Ramos',   role:'Marketing & Development',      initials:'AR',color:'#faeeda',tc:'#633806',pin:'4124',isAdmin:false,email:'alexaramos@preserveshadyrest.org'},
   {id:'alexas', name:'Alexa Sauceda', role:'Social Media & Marketing',     initials:'AS',color:'#e0f0e8',tc:'#085041',pin:'0912',isAdmin:false,email:'alexasauceda@preserveshadyrest.org'},
+  {id:'daylen', name:'Daylen Joyce',  role:'Social Media & Marketing',     initials:'DJ',color:'#e4eef4',tc:'#1d4a5c',pin:'4881',isAdmin:false,email:'daylen@preserveshadyrest.org'},
   {id:'gabe',   name:'Gabe',          role:'Dir. External Affairs & Dev.', initials:'GD',color:'#f5eced',tc:'#4A1219',pin:'1724',isAdmin:true, email:'gabe@preserveshadyrest.org'},
   {id:'tom',    name:'Tom',           role:'Chairperson',                   initials:'TC',color:'#e8e6f0',tc:'#2d2060',pin:'1956',isAdmin:true, email:'tom@preserveshadyrest.org'},
 ];
@@ -599,140 +598,140 @@ function saveState(){
   },300);
 }
 
-let POINTS   = {cali:0,jake:0,alexar:0,alexas:0,gabe:0,tom:0};
-let COMPLETED= {cali:0,jake:0,alexar:0,alexas:0,gabe:0,tom:0};
+let POINTS   = {alexar:0,alexas:0,daylen:0,gabe:0,tom:0};
+let COMPLETED= {alexar:0,alexas:0,daylen:0,gabe:0,tom:0};
 
 const DEFAULT_EVENTS=[
   // ── RECURRING: Weekly Meeting (Mondays 6:30PM, starts June 1 2026) ──
-  {id:'r_wm',date:'2026-06-01',time:'18:30',name:'6:30PM Weekly Meeting',color:'meet',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'weekly'}},
+  {id:'r_wm',date:'2026-06-01',time:'18:30',name:'6:30PM Weekly Meeting',color:'meet',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'weekly'}},
 
   // ── RECURRING: SRCC Anniversary (July 21 & Sept 21, yearly) ──
-  {id:'r_sa1',date:'2026-07-21',name:'🎉 SRCC Anniversary',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'r_sa2',date:'2026-09-21',name:'🎉 SRCC Anniversary',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'r_sa1',date:'2026-07-21',name:'🎉 SRCC Anniversary',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'r_sa2',date:'2026-09-21',name:'🎉 SRCC Anniversary',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
 
   // ── FEBRUARY 2026 ──
-  {id:'feb1',date:'2026-02-01',name:'🎉 Black History Month',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'feb2',date:'2026-02-10',name:"🎉 Chick Webb's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'feb3',date:'2026-02-14',name:"🎉 Valentine's Day",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'feb1',date:'2026-02-01',name:'🎉 Black History Month',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'feb2',date:'2026-02-10',name:"🎉 Chick Webb's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'feb3',date:'2026-02-14',name:"🎉 Valentine's Day",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
 
   // ── MARCH 2026 ──
-  {id:'mar1',date:'2026-03-08',name:"🎉 Women's Day",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'mar2',date:'2026-03-13',name:'🎉 National Good Samaritan Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'mar3',date:'2026-03-17',name:"🎉 St. Patrick's Day",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'mar4',date:'2026-03-20',name:'🎉 International Day of Happiness',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'mar5',date:'2026-03-27',name:"🎉 Sarah Vaughan's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
+  {id:'mar1',date:'2026-03-08',name:"🎉 Women's Day",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'mar2',date:'2026-03-13',name:'🎉 National Good Samaritan Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'mar3',date:'2026-03-17',name:"🎉 St. Patrick's Day",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'mar4',date:'2026-03-20',name:'🎉 International Day of Happiness',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'mar5',date:'2026-03-27',name:"🎉 Sarah Vaughan's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
 
   // ── APRIL 2026 ──
-  {id:'apr1',date:'2026-04-01',name:'🎉 April Fools Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'apr2',date:'2026-04-03',name:"🎉 Sarah Vaughan's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'apr3',date:'2026-04-07',name:"🎉 Billie Holiday's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'apr4',date:'2026-04-17',name:"🎉 Gabe's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'apr5',date:'2026-04-20',name:"🎉 Lionel Hampton's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'apr6',date:'2026-04-22',name:"🎉 Earl Hines's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'apr7',date:'2026-04-22',name:'🎉 Earth Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'apr8',date:'2026-04-25',name:"🎉 Ella Fitzgerald's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'apr9',date:'2026-04-26',name:"🎉 Count Basie's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
+  {id:'apr1',date:'2026-04-01',name:'🎉 April Fools Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'apr2',date:'2026-04-03',name:"🎉 Sarah Vaughan's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'apr3',date:'2026-04-07',name:"🎉 Billie Holiday's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'apr4',date:'2026-04-17',name:"🎉 Gabe's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'apr5',date:'2026-04-20',name:"🎉 Lionel Hampton's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'apr6',date:'2026-04-22',name:"🎉 Earl Hines's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'apr7',date:'2026-04-22',name:'🎉 Earth Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'apr8',date:'2026-04-25',name:"🎉 Ella Fitzgerald's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'apr9',date:'2026-04-26',name:"🎉 Count Basie's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
 
   // ── MAY 2026 ──
-  {id:'may1',date:'2026-05-20',name:"🎉 John Shippen's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'may2',date:'2026-05-23',name:'YT: Shady Rest history',color:'yt',vis:['cali','alexar','alexas','gabe']},
-  {id:'may3',date:'2026-05-25',name:'🎉 Memorial Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'may4',date:'2026-05-27',name:'Website Landing',color:'task',vis:['cali','gabe']},
+  {id:'may1',date:'2026-05-20',name:"🎉 John Shippen's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'may2',date:'2026-05-23',name:'YT: Shady Rest history',color:'yt',vis:['alexar','alexas','daylen','gabe']},
+  {id:'may3',date:'2026-05-25',name:'🎉 Memorial Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'may4',date:'2026-05-27',name:'Website Landing',color:'task',vis:['gabe']},
   {id:'may5',date:'2026-05-28',name:'Shippen Swing Sc',color:'task',vis:['alexar','gabe']},
-  {id:'may6',date:'2026-05-29',name:'Shippen School E',color:'task',vis:['jake','gabe']},
+  {id:'may6',date:'2026-05-29',name:'Shippen School E',color:'task',vis:['gabe']},
   {id:'may7',date:'2026-05-29',name:'Marketing Plan F',color:'task',vis:['alexar','alexas','gabe']},
-  {id:'may8',date:'2026-05-29',name:'Review Social Me',color:'task',vis:['cali','gabe']},
+  {id:'may8',date:'2026-05-29',name:'Review Social Me',color:'task',vis:['gabe']},
 
   // ── JUNE 2026 ──
-  {id:'jun1',date:'2026-06-01',time:'09:00',name:'9:00AM 3rd Grader Field Trip',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
+  {id:'jun1',date:'2026-06-01',time:'09:00',name:'9:00AM 3rd Grader Field Trip',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
   {id:'jun2',date:'2026-06-05',time:'19:00',name:'7:00PM Committee Meeting',color:'meet',vis:['gabe','tom']},
-  {id:'jun3',date:'2026-06-06',name:"🎉 Jimmie Lunceford's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun4',date:'2026-06-08',time:'09:00',name:'AP Class Field Trip',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun5',date:'2026-06-10',time:'09:00',name:'9:00AM 3rd Grader Field Trip',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun6',date:'2026-06-11',time:'09:00',name:'9:00AM 3rd Grader Field Trip',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun7',date:'2026-06-13',time:'12:00',name:'12:00PM Juneteenth Event',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun8',date:'2026-06-14',name:'🎉 Flag Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'jun9',date:'2026-06-15',name:"🎉 Ella Fitzgerald's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun10',date:'2026-06-16',name:"🎉 Chick Webb's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun11',date:'2026-06-18',name:'🎉 US Open Starts',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun12',date:'2026-06-19',name:'🎉 Juneteenth',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'jun13',date:'2026-06-21',name:'🎉 US Open Ends',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun14',date:'2026-06-25',name:'John Shippen Swing School',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jun15',date:'2026-06-27',time:'18:00',name:'6:00PM 4th of July Fireworks',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
+  {id:'jun3',date:'2026-06-06',name:"🎉 Jimmie Lunceford's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun4',date:'2026-06-08',time:'09:00',name:'AP Class Field Trip',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun5',date:'2026-06-10',time:'09:00',name:'9:00AM 3rd Grader Field Trip',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun6',date:'2026-06-11',time:'09:00',name:'9:00AM 3rd Grader Field Trip',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun7',date:'2026-06-13',time:'12:00',name:'12:00PM Juneteenth Event',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun8',date:'2026-06-14',name:'🎉 Flag Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'jun9',date:'2026-06-15',name:"🎉 Ella Fitzgerald's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun10',date:'2026-06-16',name:"🎉 Chick Webb's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun11',date:'2026-06-18',name:'🎉 US Open Starts',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun12',date:'2026-06-19',name:'🎉 Juneteenth',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'jun13',date:'2026-06-21',name:'🎉 US Open Ends',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun14',date:'2026-06-25',name:'John Shippen Swing School',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jun15',date:'2026-06-27',time:'18:00',name:'6:00PM 4th of July Fireworks',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
 
   // ── JULY 2026 ──
-  {id:'jul1',date:'2026-07-02',name:'John Shippen Swing School',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul2',date:'2026-07-04',name:'🎆 Independence Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'jul3',date:'2026-07-06',name:"🎉 Louis Armstrong's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul4',date:'2026-07-09',name:'John Shippen Swing School',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul5',date:'2026-07-11',name:'🎉 World Population Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'jul6',date:'2026-07-12',name:"🎉 Jimmie Lunceford's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul7',date:'2026-07-16',name:'John Shippen Swing School',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul8',date:'2026-07-17',name:"🎉 Billie Holiday's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul9',date:'2026-07-18',name:'🎉 Black Leaders Awareness Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul10',date:'2026-07-23',name:'John Shippen Swing School',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul11',date:'2026-07-30',name:'John Shippen Swing School',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'jul12',date:'2026-07-31',name:'🎉 National Intern Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'jul1',date:'2026-07-02',name:'John Shippen Swing School',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul2',date:'2026-07-04',name:'🎆 Independence Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'jul3',date:'2026-07-06',name:"🎉 Louis Armstrong's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul4',date:'2026-07-09',name:'John Shippen Swing School',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul5',date:'2026-07-11',name:'🎉 World Population Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'jul6',date:'2026-07-12',name:"🎉 Jimmie Lunceford's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul7',date:'2026-07-16',name:'John Shippen Swing School',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul8',date:'2026-07-17',name:"🎉 Billie Holiday's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul9',date:'2026-07-18',name:'🎉 Black Leaders Awareness Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul10',date:'2026-07-23',name:'John Shippen Swing School',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul11',date:'2026-07-30',name:'John Shippen Swing School',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'jul12',date:'2026-07-31',name:'🎉 National Intern Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
 
   // ── AUGUST 2026 ──
-  {id:'aug1',date:'2026-08-01',name:'🎉 Minority Donor Awareness Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'aug2',date:'2026-08-04',name:"🎉 Louis Armstrong's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'aug3',date:'2026-08-06',name:'John Shippen Swing School',color:'ev',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'aug4',date:'2026-08-12',name:'🎉 International Youth Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'aug5',date:'2026-08-21',name:"🎉 Count Basie's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'aug6',date:'2026-08-24',name:'🎉 Waffle Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'aug7',date:'2026-08-25',name:"🎉 Althea Gibson's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'aug8',date:'2026-08-28',name:'🎉 Black Giving Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'aug9',date:'2026-08-29',name:'🎉 First Day of US Open (Tennis)',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'aug10',date:'2026-08-31',name:'🎉 National Day for People of American Descent',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'aug11',date:'2026-08-31',name:"🎉 Lionel Hampton's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
+  {id:'aug1',date:'2026-08-01',name:'🎉 Minority Donor Awareness Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'aug2',date:'2026-08-04',name:"🎉 Louis Armstrong's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'aug3',date:'2026-08-06',name:'John Shippen Swing School',color:'ev',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'aug4',date:'2026-08-12',name:'🎉 International Youth Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'aug5',date:'2026-08-21',name:"🎉 Count Basie's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'aug6',date:'2026-08-24',name:'🎉 Waffle Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'aug7',date:'2026-08-25',name:"🎉 Althea Gibson's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'aug8',date:'2026-08-28',name:'🎉 Black Giving Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'aug9',date:'2026-08-29',name:'🎉 First Day of US Open (Tennis)',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'aug10',date:'2026-08-31',name:'🎉 National Day for People of American Descent',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'aug11',date:'2026-08-31',name:"🎉 Lionel Hampton's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
 
   // ── SEPTEMBER 2026 ──
-  {id:'sep1',date:'2026-09-05',name:'🎉 International Day of Charity',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'sep2',date:'2026-09-07',name:'🎉 Labor Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'sep3',date:'2026-09-13',name:'🎉 Last Day of US Open (Tennis)',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'sep4',date:'2026-09-19',name:'🎉 National POW/MIA Recognition Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'sep5',date:'2026-09-28',name:"🎉 Althea Gibson's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'sep6',date:'2026-09-30',name:'🎉 National Love People Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'sep1',date:'2026-09-05',name:'🎉 International Day of Charity',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'sep2',date:'2026-09-07',name:'🎉 Labor Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'sep3',date:'2026-09-13',name:'🎉 Last Day of US Open (Tennis)',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'sep4',date:'2026-09-19',name:'🎉 National POW/MIA Recognition Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'sep5',date:'2026-09-28',name:"🎉 Althea Gibson's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'sep6',date:'2026-09-30',name:'🎉 National Love People Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
 
   // ── OCTOBER 2026 ──
-  {id:'oct1',date:'2026-10-05',name:"🎉 World Teacher's Day",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'oct2',date:'2026-10-08',name:'🎉 National Hero Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'oct3',date:'2026-10-12',name:"🎉 Indigenous People's Day",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'oct4',date:'2026-10-14',name:'🎉 Black Entrepreneurs Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'oct5',date:'2026-10-31',name:'🎃 Halloween',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'oct1',date:'2026-10-05',name:"🎉 World Teacher's Day",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'oct2',date:'2026-10-08',name:'🎉 National Hero Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'oct3',date:'2026-10-12',name:"🎉 Indigenous People's Day",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'oct4',date:'2026-10-14',name:'🎉 Black Entrepreneurs Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'oct5',date:'2026-10-31',name:'🎃 Halloween',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
 
   // ── NOVEMBER 2026 ──
-  {id:'nov1',date:'2026-11-01',name:'🎉 National Gratitude Month',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'nov2',date:'2026-11-11',name:"🎉 Veteran's Day",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'nov3',date:'2026-11-18',name:"🎉 Cab Calloway's Death",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'nov4',date:'2026-11-26',name:'🦃 Thanksgiving',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'nov1',date:'2026-11-01',name:'🎉 National Gratitude Month',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'nov2',date:'2026-11-11',name:"🎉 Veteran's Day",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'nov3',date:'2026-11-18',name:"🎉 Cab Calloway's Death",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'nov4',date:'2026-11-26',name:'🦃 Thanksgiving',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
 
   // ── DECEMBER 2026 ──
-  {id:'dec1',date:'2026-12-01',name:'🎉 National Giving Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'dec2',date:'2026-12-02',name:"🎉 John Shippen's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'dec3',date:'2026-12-05',name:'🎉 International Volunteer Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'dec4',date:'2026-12-20',name:'🎉 International Human Solidarity Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'dec5',date:'2026-12-25',name:'🎄 Christmas Day',color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom'],rec:{freq:'yearly'}},
-  {id:'dec6',date:'2026-12-25',name:"🎉 Cab Calloway's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
-  {id:'dec7',date:'2026-12-28',name:"🎉 Earl Hines's Birthday",color:'holiday',vis:['cali','jake','alexar','alexas','gabe','tom']},
+  {id:'dec1',date:'2026-12-01',name:'🎉 National Giving Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'dec2',date:'2026-12-02',name:"🎉 John Shippen's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'dec3',date:'2026-12-05',name:'🎉 International Volunteer Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'dec4',date:'2026-12-20',name:'🎉 International Human Solidarity Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'dec5',date:'2026-12-25',name:'🎄 Christmas Day',color:'holiday',vis:['alexar','alexas','daylen','gabe','tom'],rec:{freq:'yearly'}},
+  {id:'dec6',date:'2026-12-25',name:"🎉 Cab Calloway's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
+  {id:'dec7',date:'2026-12-28',name:"🎉 Earl Hines's Birthday",color:'holiday',vis:['alexar','alexas','daylen','gabe','tom']},
 ];
 const DEFAULT_TASKS={
   todo:[
-    {id:'tk1',title:'Practice Call Script',tag:'marketing',vis:['jake','gabe'],due:'2026-06-01',done:false,pts:10},
-    {id:'tk2',title:"Clean James' Data / Upload Into Files",tag:'marketing',vis:['jake','gabe'],due:'2026-06-01',done:false,pts:15},
-    {id:'tk3',title:'Shippen School Email',tag:'marketing',vis:['jake','gabe'],due:'2026-05-29',done:false,pts:15},
+    {id:'tk1',title:'Practice Call Script',tag:'marketing',vis:['gabe'],due:'2026-06-01',done:false,pts:10},
+    {id:'tk2',title:"Clean James' Data / Upload Into Files",tag:'marketing',vis:['gabe'],due:'2026-06-01',done:false,pts:15},
+    {id:'tk3',title:'Shippen School Email',tag:'marketing',vis:['gabe'],due:'2026-05-29',done:false,pts:15},
     {id:'tk4',title:'Marketing Plan For Future',tag:'marketing',vis:['alexar','alexas','gabe'],due:'2026-05-29',done:false,pts:5},
     {id:'tk5',title:'Film School Events',tag:'marketing',vis:['alexar','alexas','gabe'],due:'2026-06-01',done:false,pts:5},
     {id:'tk8',title:'Film School Events',tag:'marketing',vis:['alexar','alexas','gabe'],due:'2026-06-10',done:false,pts:5},
     {id:'tk9',title:'Film School Events',tag:'marketing',vis:['alexar','alexas','gabe'],due:'2026-06-11',done:false,pts:5},
     {id:'tk10',title:'Film School Events',tag:'marketing',vis:['alexar','alexas','gabe'],due:'2026-06-08',done:false,pts:5},
-    {id:'tk11',title:'Review Social Media and Report',tag:'marketing',vis:['cali','gabe'],due:'2026-05-29',done:false,pts:5},
+    {id:'tk11',title:'Review Social Media and Report',tag:'marketing',vis:['gabe'],due:'2026-05-29',done:false,pts:5},
   ],
   inprogress:[],
   done:[
     {id:'tk6',title:'Shippen Swing School Post',tag:'marketing',vis:['alexar','gabe'],due:'2026-05-28',done:true,pts:3},
-    {id:'tk7',title:'Website Landing Page Gif',tag:'marketing',vis:['cali','gabe'],due:'2026-05-27',done:true,pts:10},
+    {id:'tk7',title:'Website Landing Page Gif',tag:'marketing',vis:['gabe'],due:'2026-05-27',done:true,pts:10},
   ]
 };
 
@@ -768,23 +767,9 @@ const _t6a=_daysAgo(1,10,5);
 const _t7a=_daysAgo(6,18,33);
 
 const THREADS=[
-  {id:'t1',sender:'Gabe + Cali + Jake',subject:'Orientation Information',snippet:"Let's discuss orientation on Zoom tonight at 7:30 EST...",date:_fmtThreadDate(_t1d),_lastDate:_t1d,p:['cali','jake','gabe'],unread:true,messages:[
-    {from:'gabe@preserveshadyrest.org',to:'cali@preserveshadyrest.org, jake@preserveshadyrest.org',time:_fmtEmailDate(_t1a),body:'Hello Cali and Jake, Welcome aboard! I am working on scheduling an orientation that both of you can attend.'},
-    {from:'jake@preserveshadyrest.org',to:'gabe@preserveshadyrest.org',time:_fmtEmailDate(_t1b),body:'Hello Gabe, I am free today and tomorrow evening after 7pm CT!'},
-    {from:'cali@preserveshadyrest.org',to:'gabe@preserveshadyrest.org',time:_fmtEmailDate(_t1c),body:'Hello, I am available tonight. Thursday morning also works.'},
-    {from:'gabe@preserveshadyrest.org',to:'cali@preserveshadyrest.org, jake@preserveshadyrest.org',time:_fmtEmailDate(_t1d),body:"Jake and Cali, Orientation is on Zoom tonight at 7:30 EST. -Gabe"},
-  ]},
   {id:'t2',sender:'Jordan Booth (USGA)',subject:'USGA Shady Rest Course Consulting',snippet:"Brian's next availability is July 23 or July 29...",date:_fmtThreadDate(_t2b),_lastDate:_t2b,p:['gabe','tom'],unread:true,messages:[
     {from:'gabe@preserveshadyrest.org',to:'JBooth@usga.org',time:_fmtEmailDate(_t2a),body:'Hello Jordan, We spoke about USGA course consulting support for Shady Rest in November.'},
     {from:'JBooth@usga.org',to:'gabe@preserveshadyrest.org',time:_fmtEmailDate(_t2b),body:"Good morning Gabe, Brian's next availability is July 23 or July 29. Best, Jordan"},
-  ]},
-  {id:'t3',sender:'Gabe → Cali',subject:'Re: Social Media & Marketing Internship',snippet:'My start date can be this week...',date:_fmtThreadDate(_t3b),_lastDate:_t3b,p:['cali','gabe'],unread:true,messages:[
-    {from:'gabe@preserveshadyrest.org',to:'cali@preserveshadyrest.org',time:_fmtEmailDate(_t3a),body:'Dear Cali, Congratulations! I am pleased to offer you the Social Media and Marketing Internship.'},
-    {from:'cali@preserveshadyrest.org',to:'gabe@preserveshadyrest.org',time:_fmtEmailDate(_t3b),body:"Good morning, Thank you! My official start date can be this week."},
-  ]},
-  {id:'t4',sender:'Gabe → Jake',subject:'Re: Shady Rest Internships',snippet:'I am free for orientation on Monday before noon...',date:_fmtThreadDate(_t4b),_lastDate:_t4b,p:['jake','gabe'],unread:true,messages:[
-    {from:'gabe@preserveshadyrest.org',to:'jake@preserveshadyrest.org',time:_fmtEmailDate(_t4a),body:'Dear Jake, Congratulations! I am pleased to offer you a position with Preserve Shady Rest.'},
-    {from:'jake@preserveshadyrest.org',to:'gabe@preserveshadyrest.org',time:_fmtEmailDate(_t4b),body:"Hello, I am free Monday before noon. Best, Jake"},
   ]},
   {id:'t5',sender:'Gabe → Alexa Ramos',subject:'Social Media & Marketing Offer',snippet:'Welcome to Preserve Shady Rest!',date:_fmtThreadDate(_t5a),_lastDate:_t5a,p:['alexar','gabe'],unread:true,messages:[
     {from:'gabe@preserveshadyrest.org',to:'alexaramos@preserveshadyrest.org',time:_fmtEmailDate(_t5a),body:'Dear Alexa, Congratulations! I am pleased to offer you the Social Media and Marketing Internship.'},
@@ -866,7 +851,7 @@ function launch(){
   document.getElementById('tsub').textContent=curUser.isAdmin?'Manage all tasks across the team':'Your assigned tasks — complete tasks to earn points!';
   document.getElementById('atbtn').style.display=curUser.isAdmin?'flex':'none';
   document.getElementById('mgr-tab').style.display=curUser.id==='gabe'?'block':'none';
-  const isDevUser=['gabe','jake','tom'].includes(curUser.id);
+  const isDevUser=['gabe','alexar','tom'].includes(curUser.id);
   document.getElementById('dev-nav').style.display=isDevUser?'flex':'none';
   document.getElementById('esub').textContent=curUser.email;
   document.getElementById('enm').textContent=curUser.email;
@@ -1290,8 +1275,24 @@ function _setSyncDot(state){
   }
 }
 
+// ── TEAM MIGRATION: drop removed users from saved data, add Daylen to team-wide items ──
+const REMOVED_USERS=['cali','jake'];
+function _migrateTeam(s){
+  if(!s)return s;
+  const fixVis=(it,teamWide)=>{
+    if(!it||!Array.isArray(it.vis))return;
+    it.vis=it.vis.filter(u=>!REMOVED_USERS.includes(u));
+    if(teamWide&&['alexar','alexas','gabe','tom'].every(u=>it.vis.includes(u))&&!it.vis.includes('daylen'))it.vis.push('daylen');
+  };
+  (s.SHARED?.events||[]).forEach(e=>fixVis(e,true));
+  ['todo','inprogress','done'].forEach(k=>(s.SHARED?.tasks?.[k]||[]).forEach(t=>fixVis(t,false)));
+  REMOVED_USERS.forEach(u=>{if(s.POINTS)delete s.POINTS[u];if(s.COMPLETED)delete s.COMPLETED[u];});
+  return s;
+}
+
 function _applySharedState(s){
   if(!s||!curUser)return;
+  s=_migrateTeam(s);
   if(s.POINTS)Object.assign(POINTS,s.POINTS);
   if(s.COMPLETED)Object.assign(COMPLETED,s.COMPLETED);
   if(s.SHARED?.events)SHARED.events=s.SHARED.events;
@@ -1311,7 +1312,7 @@ function startSync(){
   _setSyncDot('live');
   if(_fbUnsubState)_fbUnsubState();
   _fbUnsubState=window.fbWatch('srmd_state',s=>{if(curUser)_applySharedState(s);});
-  const isDevUser=['gabe','jake','tom'].includes(curUser?.id);
+  const isDevUser=['gabe','alexar','tom'].includes(curUser?.id);
   if(isDevUser){
     if(_fbUnsubDev)_fbUnsubDev();
     _fbUnsubDev=window.fbWatch('srmd_dev',dr=>{
@@ -1411,7 +1412,7 @@ async function sendEmail(){
     const newId=Date.now();
     const senderRecord={id:newId,fromEmail:curUser.email,fromName:curUser.name,toEmail:to,subject:subj,body,attachments:JSON.stringify(attachments),userId:curUser.id,threadId,isRead:true,sentAt:now,createdAt:now};
     all.push(senderRecord);
-    const KNOWN_USERS={'cali@preserveshadyrest.org':'cali','jake@preserveshadyrest.org':'jake','alexaramos@preserveshadyrest.org':'alexar','alexasauceda@preserveshadyrest.org':'alexas','gabe@preserveshadyrest.org':'gabe','tom@preserveshadyrest.org':'tom'};
+    const KNOWN_USERS={'alexaramos@preserveshadyrest.org':'alexar','alexasauceda@preserveshadyrest.org':'alexas','daylen@preserveshadyrest.org':'daylen','gabe@preserveshadyrest.org':'gabe','tom@preserveshadyrest.org':'tom'};
     const recipientUserId=KNOWN_USERS[to.toLowerCase()]||null;
     if(recipientUserId&&recipientUserId!==curUser.id){
       all.push({id:newId+1,fromEmail:curUser.email,fromName:curUser.name,toEmail:to,subject:subj,body,attachments:JSON.stringify(attachments),userId:recipientUserId,threadId,isRead:false,sentAt:now,createdAt:now});
@@ -1663,7 +1664,7 @@ async function initApp(){
   try{
     const sr=await window.fbGet('srmd_state');
     if(sr){
-      const s=sr;
+      const s=_migrateTeam(sr);
       if(s.POINTS)Object.assign(POINTS,s.POINTS);
       if(s.COMPLETED)Object.assign(COMPLETED,s.COMPLETED);
       if(s.SHARED?.events){

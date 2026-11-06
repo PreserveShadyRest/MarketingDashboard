@@ -852,7 +852,7 @@ function launch(){
   document.getElementById('tsub').textContent=curUser.isAdmin?'Manage all tasks across the team':'Your assigned tasks — complete tasks to earn points!';
   document.getElementById('atbtn').style.display=curUser.isAdmin?'flex':'none';
   document.getElementById('mgr-tab').style.display=curUser.id==='gabe'?'block':'none';
-  const isDevUser=['gabe','alexar','tom'].includes(curUser.id);
+  const isDevUser=['gabe','alexar','tom','aluba'].includes(curUser.id);
   document.getElementById('dev-nav').style.display=isDevUser?'flex':'none';
   document.getElementById('esub').textContent=curUser.email;
   document.getElementById('enm').textContent=curUser.email;
@@ -1313,7 +1313,7 @@ function startSync(){
   _setSyncDot('live');
   if(_fbUnsubState)_fbUnsubState();
   _fbUnsubState=window.fbWatch('srmd_state',s=>{if(curUser)_applySharedState(s);});
-  const isDevUser=['gabe','alexar','tom'].includes(curUser?.id);
+  const isDevUser=['gabe','alexar','tom','aluba'].includes(curUser?.id);
   if(isDevUser){
     if(_fbUnsubDev)_fbUnsubDev();
     _fbUnsubDev=window.fbWatch('srmd_dev',dr=>{
